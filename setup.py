@@ -16,12 +16,12 @@ def install_special_dependencies():
 setup(
     name="open_magvit2",
     version="0.1.0",
-    author="Your Name",
-    author_email="your.email@example.com",
-    description='Open-source replication of Google\'s MAGVIT-v2 tokenizer',
+    author="vinyesm",
+    author_email="",
+    description='Packaging of Open-source replication of Google\'s MAGVIT-v2 tokenizer',
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',  
-    url="https://github.com/TencentARC/Open-MAGVIT2",
+    url="https://github.com/vinyesm/Open-MAGVIT2",
     packages=find_packages(),
     include_package_data=True,
     package_data={
@@ -30,7 +30,7 @@ setup(
     install_requires=parse_requirements('requirements.txt'),
     classifiers=[
         "Programming Language :: Python :: 3",
-        "License :: OSI Approved :: Apache License",
+        "License :: OSI Approved :: Apache Software License",
         "Operating System :: OS Independent",
     ],
     python_requires='>=3.8',

@@ -9,6 +9,8 @@ pip install open-magvit2
 
 ## Example of usage
 
+![reconstruction-examples](reconstruction-examples.png)
+
 ### 1. Download the checkpoint from huggingface
 ```bash
 wget https://huggingface.co/TencentARC/Open-MAGVIT2/resolve/main/imagenet_256_L.ckpt

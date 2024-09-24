@@ -4,7 +4,7 @@ This is a fork of [OPEN-MAGVIT2: An Open-source Project Toward Democratizing Aut
 
 ## Install
 ```
-pip install open_magvit2
+pip install open-magvit2
 ```
 
 ## Example of usage

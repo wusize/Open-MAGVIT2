@@ -15,7 +15,7 @@ def install_special_dependencies():
 
 setup(
     name="open_magvit2",
-    version="0.1.0",
+    version="1.0",
     author="vinyesm",
     author_email="",
     description='Packaging of Open-source replication of Google\'s MAGVIT-v2 tokenizer',

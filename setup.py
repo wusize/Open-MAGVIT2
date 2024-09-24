@@ -22,7 +22,7 @@ setup(
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',  
     url="https://github.com/vinyesm/Open-MAGVIT2",
-    download_url="https://github.com/vinyesm/Open-MAGVIT2/archive/refs/tags/v0.1.0.tar.gz",
+    download_url="https://github.com/vinyesm/Open-MAGVIT2/archive/refs/tags/v1.0.tar.gz",
     packages=find_packages(),
     include_package_data=True,
     package_data={

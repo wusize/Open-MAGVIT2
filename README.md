@@ -9,11 +9,11 @@ pip install open-magvit2
 
 ## Example of usage
 
-1. Download the checkpoint from huggingface
+### 1. Download the checkpoint from huggingface
 ```bash
 wget https://huggingface.co/TencentARC/Open-MAGVIT2/resolve/main/imagenet_256_L.ckpt
 ```
-2. Load the model
+### 2. Load the model
 ```python
 import pkg_resources
 import torch
@@ -25,7 +25,7 @@ config_path = pkg_resources.resource_filename('open_magvit2', 'configs/gpu/image
 config = OmegaConf.load(config_path)
 model = load_vqgan_new(config, "imagenet_256_L.ckpt").to(DEVICE)
 ```
-3. Encode an image
+### 3. Encode an image
 ```python
 from PIL import Image
 import torchvision.transforms as transforms
@@ -36,7 +36,7 @@ batch = image_tensor.unsqueeze(0)
 with torch.no_grad():
   quant, emb_loss, tokens, loss_breakdown = model.encode(image_tensor)
 ```
-4. Decode
+### 4. Decode
 - decode from embeddings
 ```python
 from open_magvit2.reconstruct import custom_to_pil
@@ -59,7 +59,7 @@ with torch.no_grad():
 
 reconstructed_image2 = custom_to_pil(tensor2[0])
 ```
-
+### Example colab
 Check this notebook [open-MAGVIT2-package-inference-example.ipynb](https://colab.research.google.com/drive/1lpqnekYG__GgSTmW2y7w4FZEZms54Sc5?usp=sharing)
 
 

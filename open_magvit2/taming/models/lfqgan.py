@@ -3,7 +3,7 @@ import importlib
 import torch
 import torch.nn.functional as F
 import lightning as L
-
+from einops import rearrange, repeat
 from contextlib import contextmanager
 from collections import OrderedDict
 
@@ -146,10 +146,10 @@ class VQModel(L.LightningModule):
 
     def encode(self, x):
         h = self.encoder(x)
-        (quant, emb_loss, info), loss_breakdown = self.quantize(h, return_loss_breakdown=True)
-        return quant, emb_loss, info, loss_breakdown
+        return self.quantize(h)
 
     def decode(self, quant):
+        quant = rearrange(quant, 'b h w n -> b n h w')
         dec = self.decoder(quant)
         return dec
 

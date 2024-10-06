@@ -240,10 +240,6 @@ class LFQ(Module):
     def forward(
         self,
         x,
-        inv_temperature = 100.,
-        return_loss_breakdown = False,
-        mask = None,
-        return_loss = True,
     ):
         """
         einstein notation
@@ -263,52 +259,7 @@ class LFQ(Module):
         codebook_value = torch.Tensor([1.0]).to(device=x.device, dtype=x.dtype)
         quantized = torch.where(x > 0, codebook_value, -codebook_value) # higher than 0 filled 
 
-        # calculate indices
-        if self.token_factorization:
-            indices_pre = reduce((quantized[..., :self.factorized_bits[0]] > 0).int() * self.pre_mask.int(), "b n c d -> b n c", "sum")
-            indices_post = reduce((quantized[..., self.factorized_bits[0]:] > 0).int() * self.post_mask.int(), "b n c d -> b n c", "sum")
-        else:
-            indices = reduce((quantized > 0).int() * self.mask.int(), 'b n c d -> b n c', 'sum')
-
-        # entropy aux loss
-
-        if self.training and return_loss:
-            logits = 2 * einsum('... i d, j d -> ... i j', x, self.codebook)
-            # the same as euclidean distance up to a constant
-            per_sample_entropy, codebook_entropy, entropy_aux_loss = entropy_loss(
-                logits = logits,
-                sample_minimization_weight = self.sample_minimization_weight,
-                batch_maximization_weight = self.batch_maximization_weight
-            )
-
-            avg_probs = self.zero
-        else:
-            # logits = 2 * einsum('... i d, j d -> ... i j', x, self.codebook)
-            # probs = F.softmax(logits / 0.01, -1)
-            # avg_probs = reduce(probs, "b n c d -> b d", "mean")
-            # avg_probs = torch.sum(avg_probs, 0) #batch dimension
-            # if not training, just return dummy 0
-            per_sample_entropy = codebook_entropy = self.zero
-            ## calculate the codebook_entropy needed for one batch evaluation
-            entropy_aux_loss = self.zero
-            avg_probs = self.zero
-
-        # commit loss
-
-        if self.training:
-            commit_loss = F.mse_loss(x, quantized.detach(), reduction = 'none')
-
-            if exists(mask):
-                commit_loss = commit_loss[mask]
-
-            commit_loss = commit_loss.mean()
-        else:
-            commit_loss = self.zero
-
-
         # use straight-through gradients (optionally with custom activation fn) if training
-
-        quantized = x + (quantized - x).detach() #transfer to quantized
 
         # merge back codebook dim
 
@@ -317,25 +268,9 @@ class LFQ(Module):
         # reconstitute image or video dimensions
 
         quantized = unpack_one(quantized, ps, 'b * d')
-        quantized = rearrange(quantized, 'b ... d -> b d ...')
 
-        
-        if self.token_factorization:
-            indices_pre = unpack_one(indices_pre, ps, "b * c")
-            indices_post = unpack_one(indices_post, ps, "b * c")
-            indices_pre = indices_pre.flatten()
-            indices_post = indices_post.flatten()
-            indices = (indices_pre, indices_post)
-        else:
-            indices = unpack_one(indices, ps, 'b * c')
-            indices = indices.flatten()
+        return quantized
 
-        ret = (quantized, entropy_aux_loss, indices)
-
-        if not return_loss_breakdown:
-            return ret
-
-        return ret, LossBreakdown(per_sample_entropy, codebook_entropy, commit_loss, avg_probs)
 
 if __name__ == "__main__":
     quantizer = LFQ(
